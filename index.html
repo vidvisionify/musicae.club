@@ -99,6 +99,9 @@ canvas {
     box-shadow: 0 20px 60px rgba(0,0,0,0.7);
     backdrop-filter: blur(6px);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 2rem);
 }
 
 /* Header / Countdown */
@@ -151,7 +154,9 @@ canvas {
 
 /* Content */
 .content {
-    padding: 1.8rem 2rem 2.2rem;
+    padding: 1.8rem 2rem 5.5rem;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .tab-content {
@@ -240,6 +245,17 @@ a:hover {
     background: rgba(255,255,255,0.04);
     padding: 0.25rem 0.5rem;
     border-radius: 6px;
+}
+/* Ensure panel leaves extra room for bottom bar on small screens */
+@media (max-height: 720px), (max-width: 540px) {
+    .panel {
+        max-height: calc(100vh - 9rem);
+        width: calc(100% - 2rem);
+        margin: 1rem;
+    }
+    .content {
+        padding-bottom: 8rem;
+    }
 }
 </style>
 </head>
