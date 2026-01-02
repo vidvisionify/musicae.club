@@ -210,6 +210,37 @@ a:hover {
     from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* Bottom sticky banner */
+#bottom-banner {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(30,30,30,0.95), rgba(10,10,10,0.95));
+    color: #fff;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    font-family: 'Xanmono', monospace;
+    z-index: 10000;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+#bottom-banner .label {
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    font-size: 0.95rem;
+}
+#banner-countdown {
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    background: rgba(255,255,255,0.04);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+}
 </style>
 </head>
 <body>
@@ -394,7 +425,99 @@ document.getElementById("homepage-title").addEventListener("click", () => {
     document.getElementById("home").classList.add("active");
 });
 </script>
+</script>
 
+<!-- Bottom sticky banner showing weekly event countdown -->
+<div id="bottom-banner" aria-live="polite">
+    <div class="label" id="banner-label">EVENT STARTS IN</div>
+    <div id="banner-countdown">--:--:--</div>
+</div>
+</div>
+
+<script>
+(function(){
+    const labelEl = document.getElementById('banner-label');
+    const countdownEl = document.getElementById('banner-countdown');
+    const weekdayMap = {Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+
+    function getChicagoPartsFor(date){
+        const fmt = new Intl.DateTimeFormat('en-US', {timeZone:'America/Chicago', hour12:false, year:'numeric', month:'numeric', day:'numeric', hour:'numeric', minute:'numeric', second:'numeric', weekday:'short'});
+        const parts = fmt.formatToParts(date);
+        const obj = {};
+        parts.forEach(p=> obj[p.type]=p.value);
+        return {
+            year: Number(obj.year),
+            month: Number(obj.month),
+            day: Number(obj.day),
+            hour: Number(obj.hour),
+            minute: Number(obj.minute),
+            second: Number(obj.second),
+            weekday: obj.weekday
+        };
+    }
+
+    function chicagoOffsetMsAtNow(){
+        const p = getChicagoPartsFor(new Date());
+        return Date.now() - Date.UTC(p.year, p.month-1, p.day, p.hour, p.minute, p.second);
+    }
+
+    function getEpochForChicago(y,m,d,h,mi,s){
+        const offset = chicagoOffsetMsAtNow();
+        return Date.UTC(y, m-1, d, h, mi, s) + offset;
+    }
+
+    function findNextFridayStartEpoch(){
+        for(let i=0;i<14;i++){
+            const trial = new Date(Date.now() + i*86400000);
+            const cp = getChicagoPartsFor(trial);
+            if(weekdayMap[cp.weekday] === 5){
+                if(i===0){
+                    if(cp.hour > 20 || (cp.hour===20 && (cp.minute>45 || (cp.minute===45 && cp.second>=0)))){
+                        continue;
+                    }
+                }
+                return getEpochForChicago(cp.year, cp.month, cp.day, 20, 45, 0);
+            }
+        }
+        // fallback to one week ahead
+        const fallback = new Date(Date.now() + 7*86400000);
+        const fcp = getChicagoPartsFor(fallback);
+        return getEpochForChicago(fcp.year, fcp.month, fcp.day, 20, 45, 0);
+    }
+
+    const EVENT_DURATION_MS = 4.25 * 3600 * 1000; // 4h15m
+
+    function formatHMS(ms){
+        if(ms<0) ms = 0;
+        const s = Math.floor(ms/1000);
+        const hh = Math.floor(s/3600);
+        const mm = Math.floor((s%3600)/60);
+        const ss = s%60;
+        return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+    }
+
+    let startEpoch = findNextFridayStartEpoch();
+    let endEpoch = startEpoch + EVENT_DURATION_MS;
+
+    function updateBanner(){
+        const now = Date.now();
+        if(now >= endEpoch){
+            startEpoch = findNextFridayStartEpoch();
+            endEpoch = startEpoch + EVENT_DURATION_MS;
+        }
+        if(now >= startEpoch && now < endEpoch){
+            labelEl.textContent = 'EVENT IN PROGRESS';
+            countdownEl.textContent = formatHMS(endEpoch - now);
+        } else {
+            labelEl.textContent = 'EVENT STARTS IN';
+            countdownEl.textContent = formatHMS(startEpoch - now);
+        }
+    }
+
+    updateBanner();
+    setInterval(updateBanner, 1000);
+})();
+</script>
 </body>
 </html>
 
