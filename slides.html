@@ -309,7 +309,7 @@ function getNextFridayEvent(now){
     let daysUntilFriday = (5-day+7)%7;
     const eventStart = new Date(central);
     eventStart.setDate(central.getDate()+daysUntilFriday);
-    eventStart.setHours(20,45,0,0);
+    eventStart.setHours(21,0,0,0);
     if(day===5 && central>=eventStart) daysUntilFriday=0;
     return eventStart;
 }
