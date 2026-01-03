@@ -211,6 +211,15 @@ a:hover {
     text-decoration: underline;
 }
 
+/* Banner link: keep no-underline and inherit color */
+#banner-link {
+    text-decoration: none;
+    color: inherit;
+}
+#banner-link:hover {
+    text-decoration: none;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
@@ -326,6 +335,7 @@ a:hover {
                 <ul>
                     <li><a href="https://discord.gg/xTzqNgxTNJ">Join our Discord</a></li>
                     <li><a href="https://vrc.group/UAM.4159">VRChat Group</a></li>
+                    <li><a href="https://www.twitch.tv/tentwoandfurcon">TTFC on Twitch</a></li>
                     <li><a href="https://pibbcloud.cc/s/y28q87qcowL4oZQ">UAM Archive</a></li>
                     <li><a href="https://linktr.ee/tentwoandfurcon">Ten Two and Furcon</a></li>
                 </ul>
@@ -444,16 +454,19 @@ document.getElementById("homepage-title").addEventListener("click", () => {
 </script>
 
 <!-- Bottom sticky banner showing weekly event countdown -->
-<div id="bottom-banner" aria-live="polite">
-    <div class="label" id="banner-label">EVENT STARTS IN</div>
-    <div id="banner-countdown">--:--:--</div>
-</div>
+<a id="banner-link" target="_blank" rel="noopener noreferrer">
+    <div id="bottom-banner" aria-live="polite">
+        <div class="label" id="banner-label">EVENT STARTS IN</div>
+        <div id="banner-countdown">--:--:--</div>
+    </div>
+</a>
 </div>
 
 <script>
 (function(){
     const labelEl = document.getElementById('banner-label');
     const countdownEl = document.getElementById('banner-countdown');
+    const bannerLink = document.getElementById('banner-link');
     const weekdayMap = {Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
 
     function getChicagoPartsFor(date){
@@ -524,9 +537,17 @@ document.getElementById("homepage-title").addEventListener("click", () => {
         if(now >= startEpoch && now < endEpoch){
             labelEl.textContent = 'EVENT IN PROGRESS';
             countdownEl.textContent = formatHMS(endEpoch - now);
+            if(bannerLink){
+                bannerLink.href = 'https://www.twitch.tv/tentwoandfurcon';
+                bannerLink.style.pointerEvents = 'auto';
+            }
         } else {
             labelEl.textContent = 'EVENT STARTS IN';
             countdownEl.textContent = formatHMS(startEpoch - now);
+            if(bannerLink){
+                bannerLink.removeAttribute('href');
+                bannerLink.style.pointerEvents = 'none';
+            }
         }
     }
 
