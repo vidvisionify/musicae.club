@@ -233,49 +233,29 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Banner link: keep no-underline and inherit color */
-#banner-link {
-    text-decoration: none;
-    color: inherit;
-}
-#banner-link:hover {
-    text-decoration: none;
-}
-
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 /* Bottom sticky banner */
-#bottom-banner {
+#event-banner {
     position: fixed;
-    left: 0;
-    right: 0;
     bottom: 0;
-    background: linear-gradient(90deg, rgba(30,30,30,0.95), rgba(10,10,10,0.95));
-    color: #fff;
-    padding: 0.6rem 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
+    left: 0;
+    width: 100%;
+    background: rgba(10, 10, 10, 0.92);
+    backdrop-filter: blur(6px);
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding: 0.8rem 1rem;
+    text-align: center;
+    z-index: 1000;
+}
+#event-text {
     font-family: 'Xanmono', monospace;
-    z-index: 10000;
-    border-top: 1px solid rgba(255,255,255,0.06);
-}
-#bottom-banner .label {
-    font-weight: 700;
+    font-size: 1.1rem;
     letter-spacing: 0.12em;
-    font-size: 0.95rem;
-}
-#banner-countdown {
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 0.12em;
-    background: rgba(255,255,255,0.04);
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
+    color: #ffffff;
 }
 /* Ensure panel leaves extra room for bottom bar on small screens */
 @media (max-height: 720px), (max-width: 540px) {
@@ -481,19 +461,13 @@ document.getElementById("homepage-title").addEventListener("click", () => {
 </script>
 
 <!-- Bottom sticky banner showing weekly event countdown -->
-<a id="banner-link" target="_blank" rel="noopener noreferrer">
-    <div id="bottom-banner" aria-live="polite">
-        <div class="label" id="banner-label">EVENT STARTS IN</div>
-        <div id="banner-countdown">--:--:--</div>
-    </div>
-</a>
+<div id="event-banner">
+    <span id="event-text">---</span>
 </div>
 
 <script>
 (function(){
-    const labelEl = document.getElementById('banner-label');
-    const countdownEl = document.getElementById('banner-countdown');
-    const bannerLink = document.getElementById('banner-link');
+    const eventEl = document.getElementById('event-text');
     const weekdayMap = {Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
 
     function getChicagoPartsFor(date){
@@ -563,19 +537,9 @@ document.getElementById("homepage-title").addEventListener("click", () => {
             endEpoch = startEpoch + EVENT_DURATION_MS;
         }
         if(now >= startEpoch && now < endEpoch){
-            labelEl.textContent = 'EVENT IN PROGRESS';
-            countdownEl.textContent = formatHMS(endEpoch - now);
-            if(bannerLink){
-                bannerLink.href = 'https://www.twitch.tv/tentwoandfurcon';
-                bannerLink.style.pointerEvents = 'auto';
-            }
+            eventEl.textContent = 'EVENT IN PROGRESS';
         } else {
-            labelEl.textContent = 'EVENT STARTS IN';
-            countdownEl.textContent = formatHMS(startEpoch - now);
-            if(bannerLink){
-                bannerLink.removeAttribute('href');
-                bannerLink.style.pointerEvents = 'none';
-            }
+            eventEl.textContent = 'NEXT EVENT ' + formatHMS(startEpoch - now);
         }
     }
 
