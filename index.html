@@ -57,6 +57,22 @@
 -->	
 <head>
 <meta charset="UTF-8" />
+
+<!-- Social Media Banners-->
+<meta property="og:title" content="Unus Annus Musicae">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://musicae.club/assets/social-banner.png">
+<meta property="og:url" content="https://musicae.club">
+<meta property="og:description" content="VRChat music events every Friday in 2026.">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:domain" content="https://musicae.club">
+<meta property="twitter:url" content="https://musicae.club">
+<meta name="twitter:title" content="UNUS ANNUS MUSICAE">
+<meta name="twitter:description" content="VRChat music events every Friday in 2026.">
+<meta name="twitter:image" content="https://musicae.club/assets/social-banner.png">
+
+
 <title>UNUS ANNUS MUSICAE</title>
 
 <style>
@@ -260,10 +276,10 @@ a:hover {
     .panel {
         max-height: calc(100vh - 9rem);
         width: calc(100% - 2rem);
-        margin: 1rem;
+        margin: 2rem;
     }
     .content {
-        padding-bottom: 8rem;
+        padding-bottom: 4rem;
     }
 }
 </style>
@@ -298,17 +314,22 @@ a:hover {
             <!-- About tab -->
             <div class="tab-content" id="about">
                 <p>
-                    <i>Unus Annus Musicae</i> is a Ten Two and Fur Con side project,<br>
+                    <i>Unus Annus Musicae</i> is a <a href="https://linktr.ee/tentwoandfurcon">Ten Two and Fur Con</a> side project,<br>
                     heavily inspired by <i>Unus Annus</i>, the YouTube project done<br>
                     by Markiplier and Ethan Nestor.
+                </p>
+                <p>
+                    In our custom VRChat world <i>MOMENTO MORI</i>,<br>
+                    we will be hosting music events for the community to enjoy.
                 </p>
                 <p>
                     <i>Unus Annus Musicae</i> will live starting January 1st, 2026<br>
                     and die January 1st, 2027 at midnight on the end of the last event.<br>
                     Live, everyone will be there to watch the timer count down.<br>
                     Every Friday will be an event with 4 sets, each being timestamped<br>
-					by when on the death clock they are.
+					by when on the death clock they are. 
                 </p>
+
                 <p>
                     We will have 208 unique DJ’s only getting one opportunity to play.
                 </p>
@@ -519,10 +540,11 @@ document.getElementById("homepage-title").addEventListener("click", () => {
     function formatHMS(ms){
         if(ms<0) ms = 0;
         const s = Math.floor(ms/1000);
-        const hh = Math.floor(s/3600);
-        const mm = Math.floor((s%3600)/60);
-        const ss = s%60;
-        return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+        const dd = Math.floor(s / 86400);
+        const hh = Math.floor((s % 86400) / 3600);
+        const mm = Math.floor((s % 3600) / 60);
+        const ss = s % 60;
+        return String(dd).padStart(2,'0') + ':' + String(hh).padStart(2,'0') + ':' + String(mm).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
     }
 
     let startEpoch = findNextFridayStartEpoch();
